@@ -22,16 +22,16 @@ pub enum Type {
 }
 
 impl Type {
-  pub fn play_from_matches(m: &ArgMatches<'_>) -> Self {
-    if m.is_present("playlist") {
+  pub fn play_from_matches(m: &ArgMatches) -> Self {
+    if m.contains_id("playlist") {
       Self::Playlist
-    } else if m.is_present("track") {
+    } else if m.contains_id("track") {
       Self::Track
-    } else if m.is_present("artist") {
+    } else if m.contains_id("artist") {
       Self::Artist
-    } else if m.is_present("album") {
+    } else if m.contains_id("album") {
       Self::Album
-    } else if m.is_present("show") {
+    } else if m.contains_id("show") {
       Self::Show
     }
     // Enforced by clap
@@ -40,16 +40,16 @@ impl Type {
     }
   }
 
-  pub fn search_from_matches(m: &ArgMatches<'_>) -> Self {
-    if m.is_present("playlists") {
+  pub fn search_from_matches(m: &ArgMatches) -> Self {
+    if m.contains_id("playlists") {
       Self::Playlist
-    } else if m.is_present("tracks") {
+    } else if m.contains_id("tracks") {
       Self::Track
-    } else if m.is_present("artists") {
+    } else if m.contains_id("artists") {
       Self::Artist
-    } else if m.is_present("albums") {
+    } else if m.contains_id("albums") {
       Self::Album
-    } else if m.is_present("shows") {
+    } else if m.contains_id("shows") {
       Self::Show
     }
     // Enforced by clap
@@ -58,12 +58,12 @@ impl Type {
     }
   }
 
-  pub fn list_from_matches(m: &ArgMatches<'_>) -> Self {
-    if m.is_present("playlists") {
+  pub fn list_from_matches(m: &ArgMatches) -> Self {
+    if m.contains_id("playlists") {
       Self::Playlist
-    } else if m.is_present("devices") {
+    } else if m.contains_id("devices") {
       Self::Device
-    } else if m.is_present("liked") {
+    } else if m.contains_id("liked") {
       Self::Liked
     }
     // Enforced by clap
@@ -87,21 +87,21 @@ pub enum Flag {
 }
 
 impl Flag {
-  pub fn from_matches(m: &ArgMatches<'_>) -> Vec<Self> {
+  pub fn from_matches(m: &ArgMatches) -> Vec<Self> {
     // Multiple flags are possible
     let mut flags = Vec::new();
 
     // Only one of these two
-    if m.is_present("like") {
+    if m.contains_id("like") {
       flags.push(Self::Like(true));
-    } else if m.is_present("dislike") {
+    } else if m.contains_id("dislike") {
       flags.push(Self::Like(false));
     }
 
-    if m.is_present("shuffle") {
+    if m.contains_id("shuffle") {
       flags.push(Self::Shuffle);
     }
-    if m.is_present("repeat") {
+    if m.contains_id("repeat") {
       flags.push(Self::Repeat);
     }
     flags
@@ -115,11 +115,11 @@ pub enum JumpDirection {
 }
 
 impl JumpDirection {
-  pub fn from_matches(m: &ArgMatches<'_>) -> (Self, u64) {
-    if m.is_present("next") {
-      (Self::Next, m.occurrences_of("next"))
-    } else if m.is_present("previous") {
-      (Self::Previous, m.occurrences_of("previous"))
+  pub fn from_matches(m: &ArgMatches) -> (Self, u64) {
+    if m.contains_id("next") {
+      (Self::Next, m.get_occurrences::<String>("next").unwrap().count() as u64)
+    } else if m.contains_id("previous") {
+      (Self::Previous, m.get_occurrences::<String>("previous").unwrap().count() as u64)
     // Enforced by clap
     } else {
       unreachable!()
